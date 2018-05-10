@@ -1,6 +1,6 @@
 {
   "name": "clonit",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "initialize your repo with cloned repository",
   "main": "index.js",
   "bin": {
