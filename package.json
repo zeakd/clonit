@@ -1,0 +1,30 @@
+{
+  "name": "clonit",
+  "version": "0.0.0",
+  "description": "initialize your repo with cloned repository",
+  "main": "index.js",
+  "bin": {
+    "clonit": "./lib/cli.js"
+  },
+  "dependencies": {
+    "del": "^3.0.0",
+    "execa": "^0.10.0",
+    "meow": "^5.0.0"
+  },
+  "devDependencies": {
+    "ink": "^0.5.0",
+    "ink-step": "0.0.3"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeakd/clonit.git"
+  },
+  "keywords": [],
+  "author": "zeakd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zeakd/clonit/issues"
+  },
+  "homepage": "https://github.com/zeakd/clonit#readme"
+}
