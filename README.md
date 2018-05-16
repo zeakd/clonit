@@ -21,9 +21,17 @@ $ clonit --help
     $ clonit <STARTER_REPO_URL> <REPO_NAME> # if same repo root
 
   Examples
-    $ clonit https://github.com/zeakd/rollup-module-starter my-module # YOU SHOULD HAVE https://github.com/zeakd/my-module
+    $ clonit https://github.com/zeakd/rollup-module-starter my-module 
+    remote: https://github.com/zeakd/my-module
+    folder: my-module
+
     $ clonit https://github.com/zeakd/rollup-module-starter https://github.com/zeakd/my-module
+    remote: https://github.com/zeakd/my-module
+    folder: my-module
+
     $ clonit https://github.com/zeakd/rollup-module-starter https://github.com/zeakd/my-module mine
+    remote: https://github.com/zeakd/my-module
+    folder: mine
 ```
 
 ``` bash

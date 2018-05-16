@@ -9,6 +9,7 @@
   "dependencies": {
     "del": "^3.0.0",
     "execa": "^0.10.0",
+    "is-whatwg-url": "^1.0.0",
     "meow": "^5.0.0"
   },
   "devDependencies": {
@@ -20,7 +21,13 @@
     "type": "git",
     "url": "git+https://github.com/zeakd/clonit.git"
   },
-  "keywords": [],
+  "keywords": [
+    "git",
+    "clone",
+    "starter",
+    "init",
+    "cli"
+  ],
   "author": "zeakd",
   "license": "MIT",
   "bugs": {
