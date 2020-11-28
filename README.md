@@ -27,14 +27,15 @@ Easiest way to create-your-app: clone it
     --branch          use specific git branch (when use git)
 
   Examples
-    $ clonit my/starter/repo my-app
-    $ clonit my/starter/repo my-app --ignore-specs .gitignore --ignore-specs .ignore # your own ignorefile
-    $ clonit https://github.com/zeakd/rollup-module-starter my-app --prefix typescript # from remote monorepo
+    $ clonit my/starter/folder my-app
+    $ clonit my/starter/folder my-app --ignore-specs .gitignore --ignore-specs .ignore # your own ignorefile
+    $ clonit https://github.com/zeakd/starters my-cli --prefix typescript-ink-starter # from remote monorepo
 ```
 
 ## What it does 
 
 - clone starter using git repo or local folder.
+- ignore **.git**.
 - choose **branch** and **prefix**
 - respect **.gitignore** or somthing else you want.
 
@@ -42,5 +43,5 @@ Easiest way to create-your-app: clone it
 ## Roadmap
 
 - [ ] node api
-- [ ] post clonit hook (like `npm install` or `yarn`)
-- [ ] templete variable (like module name)
+- [ ] post clonit hook (for `npm install`, `yarn`, or `git init`)
+- [ ] templete variable (for module-name)
