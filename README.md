@@ -1,56 +1,49 @@
 # clonit
-initialize your repo with cloned repository
+Easiest way to create-your-app: clone it
 
 ## Install
 
 ``` bash
-$ npm install -g clonit
+  $ npm install -g clonit
+  $ clonit --help
+``` 
+
+
+``` bash
+  $ npx clonit --help
 ``` 
 
 ## Usage
 
-before run clonit, create empty repository for your project.
+``` bash
+  $ clonit --help
+```
+```
+  Usage: 
+    $ clonit <source-folder> <dest>
+    $ clonit <source-git-url> <dest>
 
-``` bash 
-$ clonit --help
-
-  initialize your repo with cloned repository
-
-  Usage
-    $ clonit <STARTER_REPO_URL> <REPO_URL> [FOLDER_NAME]
-    $ clonit <STARTER_REPO_URL> <REPO_NAME> # if same repo root
+  Options
+    --ignore-specs    ignore spec file (defaults: .gitignore)
+    --prefix          prefix of source for monorepo
+    --force           overwrite dest
+    --branch          use specific git branch (when use git)
 
   Examples
-    $ clonit https://github.com/zeakd/rollup-module-starter my-module 
-    remote: https://github.com/zeakd/my-module
-    folder: my-module
-
-    $ clonit https://github.com/zeakd/rollup-module-starter https://github.com/zeakd/my-module
-    remote: https://github.com/zeakd/my-module
-    folder: my-module
-
-    $ clonit https://github.com/zeakd/rollup-module-starter https://github.com/zeakd/my-module mine
-    remote: https://github.com/zeakd/my-module
-    folder: mine
-```
-
-``` bash
-$ clonit https://github.com/zeakd/rollup-module-starter https://github.com/zeakd/my-module my-module
-or
-$ clonit https://github.com/zeakd/rollup-module-starter my-module
-$ cd my-module
-$ npm init # npm init would not remove dependency, scripts, etc. just edit name, version, author, license of package.json.
+    $ clonit my/starter/repo my-app
+    $ clonit my/starter/repo my-app --ignore-specs .gitignore --ignore-specs .ignore # your own ignorefile
+    $ clonit https://github.com/zeakd/rollup-module-starter my-app --prefix typescript # from remote monorepo
 ```
 
 ## What it does 
 
-- git clone the starter repo
-- remove .git folder
-- init git
-- add remote origin. https://github.com/YOUR_ID/MY_MODULE.git should be created and empty
-- commit with "init" message
+- clone starter using git repo or local folder.
+- choose **branch** and **prefix**
+- respect **.gitignore** or somthing else you want.
 
-## TODO
 
-- CLI visualization
-- if repo has package.json, npm init before commit.
+## Roadmap
+
+- [ ] node api
+- [ ] post clonit hook (like `npm install` or `yarn`)
+- [ ] templete variable (like module name)
