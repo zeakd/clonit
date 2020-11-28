@@ -46,7 +46,7 @@
     "clean": "del dist/*",
     "lint": "eslint src",
     "prepublishOnly": "npm run build",
-    "_postinstall": "husky install",
+    "postinstall": "husky install",
     "prepublish": "pinst --disable",
     "postpublish": "pinst --enable"
   },
