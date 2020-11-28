@@ -5,6 +5,9 @@
   "bin": {
     "clonit": "./dist/cli/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "cpy": "^8.1.1",
     "fs-extra": "^9.0.1",
@@ -42,6 +45,7 @@
     "build:watch": "tsc -w",
     "clean": "del dist/*",
     "lint": "eslint src",
+    "prepublishOnly": "npm run build",
     "_postinstall": "husky install",
     "prepublish": "pinst --disable",
     "postpublish": "pinst --enable"

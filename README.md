@@ -15,9 +15,6 @@ Easiest way to create-your-app: clone it
 
 ## Usage
 
-``` bash
-  $ clonit --help
-```
 ```
   Usage: 
     $ clonit <source-folder> <dest>
