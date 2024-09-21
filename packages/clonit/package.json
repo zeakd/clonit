@@ -1,12 +1,27 @@
 {
   "name": "clonit",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "Scaffolding without the fuss.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -b",
+    "dev": "tsc -b -w"
   },
+  "type": "module",
+  "main": "dist/clonit.js",
+  "types": "dist/clonit.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/clonit.d.ts",
+      "default": "./dist/clonit.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  }
 }
