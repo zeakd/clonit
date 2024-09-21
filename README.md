@@ -1,47 +1,13 @@
 # clonit
-Easiest way to create-your-app: clone it
 
-## Install
+Easiest way to `create-app`: clone it
 
-``` bash
-  $ npm install -g clonit
-  $ clonit --help
-``` 
+## Core Concepts
 
+### Run Your Templates as They Are
 
-``` bash
-  $ npx clonit --help
-``` 
+With this tool, there’s no need to adapt or convert your templates using special syntax like EJS. The scaffolding process simply copies your existing app folder as-is, meaning you can immediately execute it with commands like npm run build or npm run dev. This approach makes maintaining and updating templates effortless, since no complex transformations are required—just copy, run, and develop.
 
-## Usage
+### No Template Language Overhead. Use String Replacement
 
-```
-  Usage: 
-    $ clonit <source-folder> <dest>
-    $ clonit <source-git-url> <dest>
-
-  Options
-    --ignore-specs    ignore spec file (defaults: .gitignore)
-    --prefix          prefix of source for monorepo
-    --force           overwrite dest
-    --branch          use specific git branch (when use git)
-
-  Examples
-    $ clonit my/starter/folder my-app
-    $ clonit my/starter/folder my-app --ignore-specs .gitignore --ignore-specs .ignore # your own ignorefile
-    $ clonit https://github.com/zeakd/starters my-cli --prefix typescript-ink-starter # from remote monorepo
-```
-
-## What it does 
-
-- clone starter using git repo or local folder.
-- ignore **.git**.
-- choose **branch** and **prefix**
-- respect **.gitignore** or somthing else you want.
-
-
-## Roadmap
-
-- [ ] node api
-- [ ] post clonit hook (for `npm install`, `yarn`, or `git init`)
-- [ ] templete variable (for module-name)
+This tool eliminates the need for template languages. It uses simple string replacement to handle inputs like project names, with values provided via the CLI. This keeps the process lightweight and intuitive, reducing complexity and setup time.
