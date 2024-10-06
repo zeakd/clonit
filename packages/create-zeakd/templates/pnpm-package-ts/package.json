@@ -1,0 +1,13 @@
+{
+  "name": "template-pnpm-package-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
