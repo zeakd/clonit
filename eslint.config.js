@@ -11,9 +11,9 @@ export default [
     ignores: [
       '**/node_modules',
       '**/.next',
-      '**/dist',
-      '**/out',
-      '**/_*',
+      '**/dist/**',
+      '**/out/**',
+      '**/_/**',
     ],
   },
   tseslint.configs.base,

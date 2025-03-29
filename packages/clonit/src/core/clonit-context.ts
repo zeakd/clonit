@@ -10,13 +10,19 @@ import type { ClonitContext as IClonitContext, ClonitOptions } from './types.js'
 export class ClonitContext implements IClonitContext {
   /** Temporary directory path */
   readonly tempDir:         string;
+  /** Target directory path */
+  readonly targetDir:       string;
   private readonly options: Required<ClonitOptions>;
 
-  constructor(tempDir: string, options: ClonitOptions = {}) {
+  constructor(tempDir: string, targetDir: string, options: ClonitOptions = {}) {
     if (!tempDir) {
       throw new Error('Temporary directory path is required');
     }
+    if (!targetDir) {
+      throw new Error('Target directory path is required');
+    }
     this.tempDir = tempDir;
+    this.targetDir = targetDir;
     this.options = {
       ignore:         options.ignore || [],
       keepTemp:       options.keepTemp || false,
@@ -78,8 +84,8 @@ export class ClonitContext implements IClonitContext {
   /**
    * Copy temporary folder contents to final target folder
    */
-  async out(targetPath: string): Promise<void> {
-    await copyDir(this.tempDir, targetPath, { ignore: this.options.ignore });
+  async out(): Promise<void> {
+    await copyDir(this.tempDir, this.targetDir, { ignore: this.options.ignore });
 
     if (!this.options.keepTemp) {
       await remove(this.tempDir);

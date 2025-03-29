@@ -8,12 +8,12 @@
     "test": "vitest run"
   },
   "type": "module",
-  "main": "dist/clonit.js",
-  "types": "dist/clonit.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/clonit.d.ts",
-      "default": "./dist/clonit.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "files": [

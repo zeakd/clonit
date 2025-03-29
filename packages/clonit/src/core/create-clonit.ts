@@ -8,11 +8,12 @@ import type { ClonitOptions } from './types.js';
  * 템플릿 폴더를 임시 디렉토리로 복사하고 ClonitContext를 생성
  */
 export async function createClonit(
-  sourceDir: string,
+  source: string,
+  target: string,
   options: ClonitOptions = {},
 ): Promise<ClonitContext> {
   const tempDir = await createTempDir();
-  await copyDir(sourceDir, tempDir, { ignore: options.ignore || [] });
+  await copyDir(source, tempDir, { ignore: options.ignore || [] });
 
-  return new ClonitContext(tempDir, options);
+  return new ClonitContext(tempDir, target, options);
 }

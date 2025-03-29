@@ -18,6 +18,7 @@ vi.mock('../utils/fs.js', () => ({
 describe('ClonitContext', () => {
   let context: ClonitContext;
   const tempDir = '/temp/clonit-test';
+  const targetDir = '/target/clonit-test';
   const options = {
     ignore:         ['.git', 'node_modules'],
     keepTemp:       false,
@@ -27,7 +28,7 @@ describe('ClonitContext', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    context = new ClonitContext(tempDir, options);
+    context = new ClonitContext(tempDir, targetDir, options);
   });
 
   afterEach(async () => {
@@ -36,11 +37,16 @@ describe('ClonitContext', () => {
 
   describe('constructor', () => {
     it('should throw error if tempDir is empty', () => {
-      expect(() => new ClonitContext('')).toThrow('Temporary directory path is required');
+      expect(() => new ClonitContext('', targetDir)).toThrow('Temporary directory path is required');
     });
 
-    it('should set tempDir', () => {
+    it('should throw error if targetDir is empty', () => {
+      expect(() => new ClonitContext(tempDir, '')).toThrow('Target directory path is required');
+    });
+
+    it('should set tempDir and targetDir', () => {
       expect(context.tempDir).toBe(tempDir);
+      expect(context.targetDir).toBe(targetDir);
     });
   });
 
@@ -93,21 +99,18 @@ describe('ClonitContext', () => {
 
   describe('out', () => {
     it('should copy contents of temporary folder to target folder and delete temporary folder', async () => {
-      const targetPath = '/target';
+      await context.out();
 
-      await context.out(targetPath);
-
-      expect(copyDir).toHaveBeenCalledWith(tempDir, targetPath, { ignore: options.ignore });
+      expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
       expect(remove).toHaveBeenCalledWith(tempDir);
     });
 
     it('should not delete temporary folder if keepTemp is true', async () => {
-      const targetPath = '/target';
-      context = new ClonitContext(tempDir, { ...options, keepTemp: true });
+      context = new ClonitContext(tempDir, targetDir, { ...options, keepTemp: true });
 
-      await context.out(targetPath);
+      await context.out();
 
-      expect(copyDir).toHaveBeenCalledWith(tempDir, targetPath, { ignore: options.ignore });
+      expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
       expect(remove).not.toHaveBeenCalled();
     });
   });

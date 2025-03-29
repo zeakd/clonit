@@ -47,7 +47,6 @@ export interface ClonitContext {
 
   /**
    * Copy temporary folder contents to final target folder
-   * @param targetPath Path of final target folder
    */
-  out(targetPath: string): Promise<void>;
+  out(): Promise<void>;
 }

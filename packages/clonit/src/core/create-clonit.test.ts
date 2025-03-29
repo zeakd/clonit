@@ -10,6 +10,7 @@ vi.mock('../utils/temp.js');
 
 describe('createClonit', () => {
   const sourceDir = '/source';
+  const targetDir = '/target';
   const tempDir = '/temp/clonit-test';
   const testCwd = '/test/cwd';
 
@@ -20,16 +21,17 @@ describe('createClonit', () => {
   });
 
   it('should create ClonitContext with source files', async () => {
-    const context = await createClonit(sourceDir, { cwd: testCwd });
+    const context = await createClonit(sourceDir, targetDir, { cwd: testCwd });
 
     expect(createTempDir).toHaveBeenCalled();
     expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore: [] });
     expect(context).toBeDefined();
+    expect(context.targetDir).toBe(targetDir);
   });
 
   it('should respect ignore patterns', async () => {
     const ignore = ['.git', 'node_modules'];
-    await createClonit(sourceDir, { cwd: testCwd, ignore });
+    await createClonit(sourceDir, targetDir, { cwd: testCwd, ignore });
 
     expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore });
   });
