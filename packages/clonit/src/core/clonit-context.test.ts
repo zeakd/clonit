@@ -113,6 +113,41 @@ describe('ClonitContext', () => {
       expect(readFile).toHaveBeenCalledWith(absPath);
       expect(writeFile).toHaveBeenCalledWith(absPath, newContent);
     });
+
+    it('should handle async transform function', async () => {
+      const relPath = 'test.txt';
+      const absPath = path.resolve(tempDir, relPath);
+      const oldContent = 'Hello, World!';
+      const newContent = 'Hello, Clonit!';
+
+      vi.mocked(readFile).mockResolvedValue(oldContent);
+      vi.mocked(writeFile).mockResolvedValue(undefined);
+
+      await context.update(relPath, async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return newContent;
+      });
+
+      expect(readFile).toHaveBeenCalledWith(absPath);
+      expect(writeFile).toHaveBeenCalledWith(absPath, newContent);
+    });
+
+    it('should not update file when async transform returns undefined', async () => {
+      const relPath = 'test.txt';
+      const absPath = path.resolve(tempDir, relPath);
+      const oldContent = 'Hello, World!';
+
+      vi.mocked(readFile).mockResolvedValue(oldContent);
+      vi.mocked(writeFile).mockResolvedValue(undefined);
+
+      await context.update(relPath, async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return undefined;
+      });
+
+      expect(readFile).toHaveBeenCalledWith(absPath);
+      expect(writeFile).not.toHaveBeenCalled();
+    });
   });
 
   describe('updateJson', () => {
@@ -129,6 +164,41 @@ describe('ClonitContext', () => {
 
       expect(readFile).toHaveBeenCalledWith(absPath);
       expect(writeFile).toHaveBeenCalledWith(absPath, newContent);
+    });
+
+    it('should handle async transform function', async () => {
+      const relPath = 'package.json';
+      const absPath = path.resolve(tempDir, relPath);
+      const oldContent = '{"name": "test"}';
+      const newContent = '{\n  "name": "clonit"\n}';
+
+      vi.mocked(readFile).mockResolvedValue(oldContent);
+      vi.mocked(writeFile).mockResolvedValue(undefined);
+
+      await context.updateJson(relPath, async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return { name: 'clonit' };
+      });
+
+      expect(readFile).toHaveBeenCalledWith(absPath);
+      expect(writeFile).toHaveBeenCalledWith(absPath, newContent);
+    });
+
+    it('should not update JSON file when async transform returns undefined', async () => {
+      const relPath = 'package.json';
+      const absPath = path.resolve(tempDir, relPath);
+      const oldContent = '{"name": "test"}';
+
+      vi.mocked(readFile).mockResolvedValue(oldContent);
+      vi.mocked(writeFile).mockResolvedValue(undefined);
+
+      await context.updateJson(relPath, async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return undefined;
+      });
+
+      expect(readFile).toHaveBeenCalledWith(absPath);
+      expect(writeFile).not.toHaveBeenCalled();
     });
   });
 

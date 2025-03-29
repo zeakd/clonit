@@ -50,7 +50,7 @@ export interface ClonitContext {
    */
   update(
     relPath: string,
-    transform: (oldContent: string) => string | Promise<string>
+    transform: (oldContent: string) => string | Promise<string> | undefined | Promise<undefined>
   ): Promise<void>;
 
   /**
@@ -60,7 +60,7 @@ export interface ClonitContext {
    */
   updateJson(
     relPath: string,
-    transform: (jsonObj: Record<string, unknown>) => Record<string, unknown> | Promise<Record<string, unknown>>
+    transform: (jsonObj: Record<string, unknown>) => Record<string, unknown> | Promise<Record<string, unknown>> | undefined | Promise<undefined>
   ): Promise<void>;
 
   /**

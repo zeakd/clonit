@@ -102,12 +102,14 @@ export class ClonitContext implements IClonitContext {
    */
   async update(
     relPath: string,
-    transform: (oldContent: string) => string | Promise<string>,
+    transform: (oldContent: string) => string | Promise<string> | undefined | Promise<undefined>,
   ): Promise<void> {
     const absPath = this.resolvePath(relPath);
     const content = await readFile(absPath);
     const newContent = await transform(content);
-    await writeFile(absPath, newContent);
+    if (newContent !== undefined) {
+      await writeFile(absPath, newContent);
+    }
   }
 
   /**
@@ -115,13 +117,15 @@ export class ClonitContext implements IClonitContext {
    */
   async updateJson(
     relPath: string,
-    transform: (jsonObj: Record<string, unknown>) => Record<string, unknown> | Promise<Record<string, unknown>>,
+    transform: (jsonObj: Record<string, unknown>) => Record<string, unknown> | Promise<Record<string, unknown>> | undefined | Promise<undefined>,
   ): Promise<void> {
     const absPath = this.resolvePath(relPath);
     const content = await readFile(absPath);
     const jsonObj = JSON.parse(content);
     const newJsonObj = await transform(jsonObj);
-    await writeFile(absPath, JSON.stringify(newJsonObj, null, 2));
+    if (newJsonObj !== undefined) {
+      await writeFile(absPath, JSON.stringify(newJsonObj, null, 2));
+    }
   }
 
   /**
