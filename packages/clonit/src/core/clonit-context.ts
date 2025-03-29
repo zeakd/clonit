@@ -42,7 +42,15 @@ export class ClonitContext implements IClonitContext {
    * Convert relative path to absolute path based on tempDir
    */
   private resolvePath(relPath: string): string {
-    return path.resolve(this.tempDir, relPath);
+    const absPath = path.resolve(this.tempDir, relPath);
+    const normalizedAbsPath = path.normalize(absPath);
+    const normalizedTempDir = path.normalize(this.tempDir);
+
+    if (!normalizedAbsPath.startsWith(normalizedTempDir)) {
+      throw new Error(`Path "${relPath}" is outside of temporary directory`);
+    }
+
+    return absPath;
   }
 
   /**

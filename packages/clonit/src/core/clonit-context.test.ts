@@ -61,6 +61,38 @@ describe('ClonitContext', () => {
 
       expect(rename).toHaveBeenCalledWith(oldAbsPath, newAbsPath);
     });
+
+    it('should throw error when oldPath is outside tempDir', async () => {
+      const oldPath = '../outside.txt';
+      const newPath = 'new.txt';
+
+      await expect(context.rename(oldPath, newPath)).rejects.toThrow('Path "../outside.txt" is outside of temporary directory');
+      expect(rename).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when newPath is outside tempDir', async () => {
+      const oldPath = 'old.txt';
+      const newPath = '../outside.txt';
+
+      await expect(context.rename(oldPath, newPath)).rejects.toThrow('Path "../outside.txt" is outside of temporary directory');
+      expect(rename).not.toHaveBeenCalled();
+    });
+
+    it('should throw error for directory traversal in oldPath', async () => {
+      const oldPath = 'subdir/../../../outside.txt';
+      const newPath = 'new.txt';
+
+      await expect(context.rename(oldPath, newPath)).rejects.toThrow('Path "subdir/../../../outside.txt" is outside of temporary directory');
+      expect(rename).not.toHaveBeenCalled();
+    });
+
+    it('should throw error for directory traversal in newPath', async () => {
+      const oldPath = 'old.txt';
+      const newPath = 'subdir/../../../outside.txt';
+
+      await expect(context.rename(oldPath, newPath)).rejects.toThrow('Path "subdir/../../../outside.txt" is outside of temporary directory');
+      expect(rename).not.toHaveBeenCalled();
+    });
   });
 
   describe('update', () => {
@@ -120,6 +152,32 @@ describe('ClonitContext', () => {
       vi.mocked(exists).mockResolvedValue(false);
       await context.cleanup();
       expect(remove).toHaveBeenCalledWith(tempDir);
+    });
+  });
+
+  describe('resolvePath', () => {
+    it('should resolve path within tempDir', () => {
+      const relPath = 'test.txt';
+      const absPath = path.resolve(tempDir, relPath);
+
+      // @ts-expect-error - private method access for testing
+      const result = context.resolvePath(relPath);
+
+      expect(result).toBe(absPath);
+    });
+
+    it('should throw error for path outside tempDir', () => {
+      const relPath = '../outside.txt';
+
+      // @ts-expect-error - private method access for testing
+      expect(() => context.resolvePath(relPath)).toThrow('Path "../outside.txt" is outside of temporary directory');
+    });
+
+    it('should throw error for path with directory traversal', () => {
+      const relPath = 'subdir/../../../outside.txt';
+
+      // @ts-expect-error - private method access for testing
+      expect(() => context.resolvePath(relPath)).toThrow('Path "subdir/../../../outside.txt" is outside of temporary directory');
     });
   });
 });
