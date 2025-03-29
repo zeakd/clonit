@@ -1,8 +1,8 @@
-import * as path                                                    from 'node:path';
+import * as path                                                           from 'node:path';
 
-import { readFile, writeFile, copyDir, remove, rename, isEmptyDir } from '../utils/fs.js';
+import { readFile, writeFile, copyDir, remove, rename, isEmptyDir, mkdir } from '../utils/fs.js';
 
-import type { ClonitContext as IClonitContext, ClonitOptions }      from './types.js';
+import type { ClonitContext as IClonitContext, ClonitOptions }             from './types.js';
 
 /**
  * Clonit context class
@@ -12,6 +12,8 @@ export class ClonitContext implements IClonitContext {
   readonly tempDir:         string;
   /** Target directory path */
   readonly targetDir:       string;
+  /** Current working directory (same as tempDir) */
+  readonly cwd:             string;
   private readonly options: Required<ClonitOptions>;
 
   constructor(tempDir: string, targetDir: string, options: ClonitOptions = {}) {
@@ -23,6 +25,7 @@ export class ClonitContext implements IClonitContext {
     }
     this.tempDir = tempDir;
     this.targetDir = targetDir;
+    this.cwd = tempDir;
     this.options = {
       ignore:    options.ignore || [],
       keepTemp:  options.keepTemp || false,
@@ -51,6 +54,38 @@ export class ClonitContext implements IClonitContext {
     }
 
     return absPath;
+  }
+
+  /**
+   * Resolve relative path to absolute path based on cwd
+   */
+  resolve(relPath: string): string {
+    return path.resolve(this.cwd, relPath);
+  }
+
+  /**
+   * Create a new file or directory in temporary folder
+   */
+  async create(relPath: string, content?: string, isDirectory: boolean = false): Promise<void> {
+    const absPath = this.resolvePath(relPath);
+
+    if (isDirectory) {
+      await mkdir(absPath, { recursive: true });
+    }
+    else {
+      if (content === undefined) {
+        throw new Error('Content is required for file creation');
+      }
+      await writeFile(absPath, content);
+    }
+  }
+
+  /**
+   * Delete a file or directory in temporary folder
+   */
+  async delete(relPath: string): Promise<void> {
+    const absPath = this.resolvePath(relPath);
+    await remove(absPath);
   }
 
   /**

@@ -1,10 +1,10 @@
-import path                                                                 from 'path';
+import path                                                                        from 'path';
 
-import { describe, it, expect, vi, beforeEach, afterEach }                  from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach }                         from 'vitest';
 
-import { readFile, writeFile, rename, copyDir, remove, exists, isEmptyDir } from '../utils/fs.js';
+import { readFile, writeFile, rename, copyDir, remove, exists, isEmptyDir, mkdir } from '../utils/fs.js';
 
-import { ClonitContext }                                                    from './clonit-context.js';
+import { ClonitContext }                                                           from './clonit-context.js';
 
 vi.mock('../utils/fs.js', () => ({
   readFile:   vi.fn(),
@@ -14,6 +14,7 @@ vi.mock('../utils/fs.js', () => ({
   remove:     vi.fn(),
   exists:     vi.fn(),
   isEmptyDir: vi.fn(),
+  mkdir:      vi.fn(),
 }));
 
 describe('ClonitContext', () => {
@@ -197,6 +198,99 @@ describe('ClonitContext', () => {
 
       // @ts-expect-error - private method access for testing
       expect(() => context.resolvePath(relPath)).toThrow('Path "subdir/../../../outside.txt" is outside of temporary directory');
+    });
+  });
+
+  describe('create', () => {
+    it('should create a file with content', async () => {
+      const relPath = 'test.txt';
+      const content = 'Hello, World!';
+      const absPath = path.resolve(tempDir, relPath);
+
+      await context.create(relPath, content);
+
+      expect(writeFile).toHaveBeenCalledWith(absPath, content);
+      expect(mkdir).not.toHaveBeenCalled();
+    });
+
+    it('should create a directory', async () => {
+      const relPath = 'src/components';
+      const absPath = path.resolve(tempDir, relPath);
+
+      await context.create(relPath, undefined, true);
+
+      expect(mkdir).toHaveBeenCalledWith(absPath, { recursive: true });
+      expect(writeFile).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when creating file without content', async () => {
+      const relPath = 'test.txt';
+
+      await expect(context.create(relPath)).rejects.toThrow('Content is required for file creation');
+      expect(writeFile).not.toHaveBeenCalled();
+      expect(mkdir).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when path is outside tempDir', async () => {
+      const relPath = '../outside.txt';
+      const content = 'Hello, World!';
+
+      await expect(context.create(relPath, content)).rejects.toThrow('Path "../outside.txt" is outside of temporary directory');
+      expect(writeFile).not.toHaveBeenCalled();
+      expect(mkdir).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete file or directory', async () => {
+      const relPath = 'test.txt';
+      const absPath = path.resolve(tempDir, relPath);
+
+      await context.delete(relPath);
+
+      expect(remove).toHaveBeenCalledWith(absPath);
+    });
+
+    it('should throw error when path is outside tempDir', async () => {
+      const relPath = '../outside.txt';
+
+      await expect(context.delete(relPath)).rejects.toThrow('Path "../outside.txt" is outside of temporary directory');
+      expect(remove).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('cwd', () => {
+    it('should use tempDir as cwd', () => {
+      const context = new ClonitContext(tempDir, targetDir, options);
+      expect(context.cwd).toBe(tempDir);
+    });
+
+    it('should not be affected by options.cwd', () => {
+      const customCwd = '/custom/cwd';
+      const context = new ClonitContext(tempDir, targetDir, { ...options, cwd: customCwd });
+      expect(context.cwd).toBe(tempDir);
+    });
+  });
+
+  describe('resolve', () => {
+    it('should resolve relative path to absolute path based on tempDir', () => {
+      const context = new ClonitContext(tempDir, targetDir, options);
+      const relPath = 'src/index.ts';
+      const expected = path.resolve(tempDir, relPath);
+      expect(context.resolve(relPath)).toBe(expected);
+    });
+
+    it('should handle parent directory traversal', () => {
+      const context = new ClonitContext(tempDir, targetDir, options);
+      const relPath = '../lib/utils.ts';
+      const expected = path.resolve(tempDir, relPath);
+      expect(context.resolve(relPath)).toBe(expected);
+    });
+
+    it('should handle absolute paths', () => {
+      const context = new ClonitContext(tempDir, targetDir, options);
+      const absPath = '/absolute/path/to/file.ts';
+      expect(context.resolve(absPath)).toBe(absPath);
     });
   });
 });

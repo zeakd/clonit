@@ -6,6 +6,13 @@ export interface FsOptions {
 }
 
 /**
+ * Create directory recursively
+ */
+export async function mkdir(path: string, options: { recursive?: boolean } = {}): Promise<void> {
+  await fs.mkdir(path, options);
+}
+
+/**
  * Check if file or directory exists
  */
 export async function exists(path: string): Promise<boolean> {

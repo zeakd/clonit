@@ -8,6 +8,7 @@ export interface ClonitOptions {
   keepTemp?:  boolean;
   /** Whether to overwrite target folder even if not empty (default: false=error) */
   overwrite?: boolean;
+  /** Current working directory for resolving target path (default: process.cwd()) */
   cwd?:       string;
 }
 
@@ -17,6 +18,23 @@ export interface ClonitOptions {
 export interface ClonitContext {
   /** Temporary directory path */
   readonly tempDir: string;
+
+  /** Current working directory (same as tempDir) */
+  readonly cwd: string;
+
+  /**
+   * Create a new file or directory in temporary folder
+   * @param relPath Path of file/directory to create
+   * @param content Content for file (optional, required for files)
+   * @param isDirectory Whether to create a directory (default: false)
+   */
+  create(relPath: string, content?: string, isDirectory?: boolean): Promise<void>;
+
+  /**
+   * Delete a file or directory in temporary folder
+   * @param relPath Path of file/directory to delete
+   */
+  delete(relPath: string): Promise<void>;
 
   /**
    * Rename file or directory in temporary folder
@@ -49,4 +67,11 @@ export interface ClonitContext {
    * Copy temporary folder contents to final target folder
    */
   out(): Promise<void>;
+
+  /**
+   * Resolve relative path to absolute path based on cwd (tempDir)
+   * @param relPath Relative path to resolve
+   * @returns Absolute path
+   */
+  resolve(relPath: string): string;
 }
