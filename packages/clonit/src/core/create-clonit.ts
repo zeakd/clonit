@@ -1,3 +1,5 @@
+import { fileURLToPath }      from 'node:url';
+
 import { copyDir }            from '../utils/fs.js';
 import { createTempDir }      from '../utils/temp.js';
 
@@ -13,7 +15,13 @@ export async function createClonit(
   options: ClonitOptions = {},
 ): Promise<ClonitContext> {
   const tempDir = await createTempDir();
-  await copyDir(source, tempDir, { ignore: options.ignore || [] });
+
+  // file:// URL을 처리
+  const sourcePath = source.startsWith('file://')
+    ? fileURLToPath(source)
+    : source;
+
+  await copyDir(sourcePath, tempDir, { ignore: options.ignore || [] });
 
   return new ClonitContext(tempDir, target, options);
 }

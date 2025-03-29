@@ -1,3 +1,5 @@
+import { fileURLToPath }                        from 'node:url';
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { copyDir }                              from '../utils/fs.js';
@@ -34,5 +36,14 @@ describe('createClonit', () => {
     await createClonit(sourceDir, targetDir, { cwd: testCwd, ignore });
 
     expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore });
+  });
+
+  it('should handle file:// URLs correctly', async () => {
+    const fileUrl = 'file:///source';
+    const expectedPath = fileURLToPath(fileUrl);
+
+    await createClonit(fileUrl, targetDir, { cwd: testCwd });
+
+    expect(copyDir).toHaveBeenCalledWith(expectedPath, tempDir, { ignore: [] });
   });
 });
