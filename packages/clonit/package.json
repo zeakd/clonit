@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b -w",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "type": "module",
   "main": "dist/clonit.js",

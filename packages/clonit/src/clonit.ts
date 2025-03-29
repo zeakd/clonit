@@ -55,7 +55,7 @@ async function getGitignoreFiles(dir: string) {
       gitignoreFiles.push(gitignoreFilepath);
     }
     catch {
-      // skip
+      // skip if file does not exist
     }
 
     if (dirpath === root) {

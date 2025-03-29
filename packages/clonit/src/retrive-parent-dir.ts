@@ -1,7 +1,7 @@
 import * as path from 'node:path';
 
 /**
- * fromDir 부터 부모 디렉토리를 순회하며 디렉토리를 반환하는 generator
+ * Generator that traverses parent directories from fromDir
  * @example
  * for (const dir of retriveParent('/path/to/dir'))
  */
