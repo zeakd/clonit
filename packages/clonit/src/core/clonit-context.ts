@@ -31,6 +31,7 @@ export class ClonitContext implements IClonitContext {
       keepTemp:  options.keepTemp || false,
       overwrite: options.overwrite || false,
       cwd:       options.cwd || process.cwd(),
+      dryRun:    options.dryRun || false,
     };
   }
 
@@ -64,10 +65,22 @@ export class ClonitContext implements IClonitContext {
   }
 
   /**
+   * Read content of a file from temporary folder
+   */
+  async read(relPath: string): Promise<string> {
+    const absPath = this.resolvePath(relPath);
+    return readFile(absPath);
+  }
+
+  /**
    * Create a new file or directory in temporary folder
    */
   async create(relPath: string, content?: string, isDirectory: boolean = false): Promise<void> {
     const absPath = this.resolvePath(relPath);
+
+    if (this.options.dryRun) {
+      return;
+    }
 
     if (isDirectory) {
       await mkdir(absPath, { recursive: true });
@@ -85,6 +98,9 @@ export class ClonitContext implements IClonitContext {
    */
   async delete(relPath: string): Promise<void> {
     const absPath = this.resolvePath(relPath);
+    if (this.options.dryRun) {
+      return;
+    }
     await remove(absPath);
   }
 
@@ -94,6 +110,9 @@ export class ClonitContext implements IClonitContext {
   async rename(oldPath: string, newPath: string): Promise<void> {
     const oldAbsPath = this.resolvePath(oldPath);
     const newAbsPath = this.resolvePath(newPath);
+    if (this.options.dryRun) {
+      return;
+    }
     await rename(oldAbsPath, newAbsPath);
   }
 
@@ -108,6 +127,9 @@ export class ClonitContext implements IClonitContext {
     const content = await readFile(absPath);
     const newContent = await transform(content);
     if (newContent !== undefined) {
+      if (this.options.dryRun) {
+        return;
+      }
       await writeFile(absPath, newContent);
     }
   }
@@ -124,6 +146,9 @@ export class ClonitContext implements IClonitContext {
     const jsonObj = JSON.parse(content);
     const newJsonObj = await transform(jsonObj);
     if (newJsonObj !== undefined) {
+      if (this.options.dryRun) {
+        return;
+      }
       await writeFile(absPath, JSON.stringify(newJsonObj, null, 2));
     }
   }
@@ -136,6 +161,10 @@ export class ClonitContext implements IClonitContext {
     const isTargetEmpty = await isEmptyDir(this.targetDir);
     if (!isTargetEmpty && !this.options.overwrite) {
       throw new Error(`Target directory "${this.targetDir}" is not empty. Use overwrite option to proceed.`);
+    }
+
+    if (this.options.dryRun) {
+      return;
     }
 
     await copyDir(this.tempDir, this.targetDir, { ignore: this.options.ignore });

@@ -8,7 +8,8 @@ import { createClonit } from 'clonit'
 
 // -
 const ctx = await createClonit('./templates/hello-app/', {
-	overwrite: true // overwrite target directory if not empty
+	overwrite: true, // overwrite target directory if not empty
+	dryRun: true    // simulate operations without actual changes
 }); 
 
 // -
@@ -33,6 +34,7 @@ await ctx.out('./my-app');
 - `rename`: 파일이나 디렉토리 이름 변경
 - `update`: 텍스트 파일 내용 수정
 - `updateJson`: JSON 파일 내용 수정
+- `read`: 파일 내용 읽기
 - `out`: 임시 폴더의 내용을 최종 타겟 폴더로 복사
 
 ## Options
@@ -41,4 +43,5 @@ await ctx.out('./my-app');
 - `keepTemp`: out() 후 임시 폴더를 유지할지 여부 (기본값: false=삭제)
 - `overwrite`: 타겟 폴더가 비어있지 않을 때 덮어쓸지 여부 (기본값: false=에러)
 - `cwd`: 작업 디렉토리 (기본값: process.cwd())
+- `dryRun`: 실제 파일 시스템 변경 없이 시뮬레이션만 수행 (기본값: false)
 

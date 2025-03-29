@@ -10,6 +10,8 @@ export interface ClonitOptions {
   overwrite?: boolean;
   /** Current working directory for resolving target path (default: process.cwd()) */
   cwd?:       string;
+  /** Whether to simulate file system operations without actual changes (default: false) */
+  dryRun?:    boolean;
 }
 
 /**
@@ -21,6 +23,13 @@ export interface ClonitContext {
 
   /** Current working directory (same as tempDir) */
   readonly cwd: string;
+
+  /**
+   * Read content of a file from temporary folder
+   * @param relPath Path of file to read
+   * @returns Content of the file
+   */
+  read(relPath: string): Promise<string>;
 
   /**
    * Create a new file or directory in temporary folder

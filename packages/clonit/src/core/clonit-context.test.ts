@@ -363,4 +363,79 @@ describe('ClonitContext', () => {
       expect(context.resolve(absPath)).toBe(absPath);
     });
   });
+
+  describe('read', () => {
+    it('should read file content', async () => {
+      const relPath = 'test.txt';
+      const content = 'Hello, World!';
+      const absPath = path.resolve(tempDir, relPath);
+
+      vi.mocked(readFile).mockResolvedValue(content);
+
+      const result = await context.read(relPath);
+
+      expect(readFile).toHaveBeenCalledWith(absPath);
+      expect(result).toBe(content);
+    });
+
+    it('should throw error when path is outside tempDir', async () => {
+      const relPath = '../outside.txt';
+
+      await expect(context.read(relPath)).rejects.toThrow('Path "../outside.txt" is outside of temporary directory');
+      expect(readFile).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('dryRun', () => {
+    it('should not perform file system operations when dryRun is true', async () => {
+      const context = new ClonitContext(tempDir, targetDir, { ...options, dryRun: true });
+
+      // create
+      await context.create('test.txt', 'content');
+      expect(writeFile).not.toHaveBeenCalled();
+
+      // delete
+      await context.delete('test.txt');
+      expect(remove).not.toHaveBeenCalled();
+
+      // rename
+      await context.rename('old.txt', 'new.txt');
+      expect(rename).not.toHaveBeenCalled();
+
+      // update
+      await context.update('test.txt', content => content);
+      expect(writeFile).not.toHaveBeenCalled();
+
+      // updateJson
+      vi.mocked(readFile).mockResolvedValue('{"name": "test"}');
+      await context.updateJson('package.json', pkg => pkg);
+      expect(writeFile).not.toHaveBeenCalled();
+
+      // out
+      await context.out();
+      expect(copyDir).not.toHaveBeenCalled();
+      expect(remove).not.toHaveBeenCalled();
+    });
+
+    it('should still read files in dryRun mode', async () => {
+      const context = new ClonitContext(tempDir, targetDir, { ...options, dryRun: true });
+      const content = 'test content';
+      vi.mocked(readFile).mockResolvedValue(content);
+
+      const result = await context.read('test.txt');
+
+      expect(readFile).toHaveBeenCalled();
+      expect(result).toBe(content);
+    });
+
+    it('should still validate paths in dryRun mode', async () => {
+      const context = new ClonitContext(tempDir, targetDir, { ...options, dryRun: true });
+
+      await expect(context.create('../outside.txt', 'content')).rejects.toThrow();
+      await expect(context.delete('../outside.txt')).rejects.toThrow();
+      await expect(context.rename('../outside.txt', 'new.txt')).rejects.toThrow();
+      await expect(context.update('../outside.txt', content => content)).rejects.toThrow();
+      await expect(context.updateJson('../outside.txt', pkg => pkg)).rejects.toThrow();
+    });
+  });
 });
