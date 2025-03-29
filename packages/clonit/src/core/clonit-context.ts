@@ -1,8 +1,8 @@
-import * as path                                               from 'node:path';
+import * as path                                                    from 'node:path';
 
-import { readFile, writeFile, copyDir, remove, rename }        from '../utils/fs.js';
+import { readFile, writeFile, copyDir, remove, rename, isEmptyDir } from '../utils/fs.js';
 
-import type { ClonitContext as IClonitContext, ClonitOptions } from './types.js';
+import type { ClonitContext as IClonitContext, ClonitOptions }      from './types.js';
 
 /**
  * Clonit context class
@@ -24,10 +24,10 @@ export class ClonitContext implements IClonitContext {
     this.tempDir = tempDir;
     this.targetDir = targetDir;
     this.options = {
-      ignore:         options.ignore || [],
-      keepTemp:       options.keepTemp || false,
-      forceOverwrite: options.forceOverwrite || false,
-      cwd:            options.cwd || process.cwd(),
+      ignore:    options.ignore || [],
+      keepTemp:  options.keepTemp || false,
+      overwrite: options.overwrite || false,
+      cwd:       options.cwd || process.cwd(),
     };
   }
 
@@ -93,6 +93,12 @@ export class ClonitContext implements IClonitContext {
    * Copy temporary folder contents to final target folder
    */
   async out(): Promise<void> {
+    // 타겟 디렉토리가 비어있는지 확인
+    const isTargetEmpty = await isEmptyDir(this.targetDir);
+    if (!isTargetEmpty && !this.options.overwrite) {
+      throw new Error(`Target directory "${this.targetDir}" is not empty. Use overwrite option to proceed.`);
+    }
+
     await copyDir(this.tempDir, this.targetDir, { ignore: this.options.ignore });
 
     if (!this.options.keepTemp) {

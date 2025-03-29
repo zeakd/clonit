@@ -1,18 +1,19 @@
-import path                                                     from 'path';
+import path                                                                 from 'path';
 
-import { describe, it, expect, vi, beforeEach, afterEach }      from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach }                  from 'vitest';
 
-import { readFile, writeFile, rename, copyDir, remove, exists } from '../utils/fs.js';
+import { readFile, writeFile, rename, copyDir, remove, exists, isEmptyDir } from '../utils/fs.js';
 
-import { ClonitContext }                                        from './clonit-context.js';
+import { ClonitContext }                                                    from './clonit-context.js';
 
 vi.mock('../utils/fs.js', () => ({
-  readFile:  vi.fn(),
-  writeFile: vi.fn(),
-  rename:    vi.fn(),
-  copyDir:   vi.fn(),
-  remove:    vi.fn(),
-  exists:    vi.fn(),
+  readFile:   vi.fn(),
+  writeFile:  vi.fn(),
+  rename:     vi.fn(),
+  copyDir:    vi.fn(),
+  remove:     vi.fn(),
+  exists:     vi.fn(),
+  isEmptyDir: vi.fn(),
 }));
 
 describe('ClonitContext', () => {
@@ -20,14 +21,15 @@ describe('ClonitContext', () => {
   const tempDir = '/temp/clonit-test';
   const targetDir = '/target/clonit-test';
   const options = {
-    ignore:         ['.git', 'node_modules'],
-    keepTemp:       false,
-    forceOverwrite: false,
-    cwd:            '/test/cwd',
+    ignore:    ['.git', 'node_modules'],
+    keepTemp:  false,
+    overwrite: false,
+    cwd:       '/test/cwd',
   };
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(isEmptyDir).mockResolvedValue(true);
     context = new ClonitContext(tempDir, targetDir, options);
   });
 
@@ -130,16 +132,33 @@ describe('ClonitContext', () => {
   });
 
   describe('out', () => {
-    it('should copy contents of temporary folder to target folder and delete temporary folder', async () => {
+    it('should copy files to target directory', async () => {
       await context.out();
 
       expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
       expect(remove).toHaveBeenCalledWith(tempDir);
     });
 
-    it('should not delete temporary folder if keepTemp is true', async () => {
-      context = new ClonitContext(tempDir, targetDir, { ...options, keepTemp: true });
+    it('should throw error when target is not empty and overwrite is false', async () => {
+      vi.mocked(isEmptyDir).mockResolvedValue(false);
 
+      await expect(context.out())
+        .rejects
+        .toThrow('Target directory "/target/clonit-test" is not empty. Use overwrite option to proceed.');
+    });
+
+    it('should proceed when target is not empty but overwrite is true', async () => {
+      vi.mocked(isEmptyDir).mockResolvedValue(false);
+      const context = new ClonitContext(tempDir, targetDir, { ...options, overwrite: true });
+
+      await context.out();
+
+      expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
+      expect(remove).toHaveBeenCalledWith(tempDir);
+    });
+
+    it('should not remove temp directory when keepTemp is true', async () => {
+      const context = new ClonitContext(tempDir, targetDir, { ...options, keepTemp: true });
       await context.out();
 
       expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });

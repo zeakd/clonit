@@ -3,12 +3,12 @@
  */
 export interface ClonitOptions {
   /** File/folder patterns to ignore when copying (glob) */
-  ignore?:         string[];
+  ignore?:    string[];
   /** Whether to keep temporary folder after out() (default: false=delete) */
-  keepTemp?:       boolean;
+  keepTemp?:  boolean;
   /** Whether to overwrite target folder even if not empty (default: false=error) */
-  forceOverwrite?: boolean;
-  cwd?:            string;
+  overwrite?: boolean;
+  cwd?:       string;
 }
 
 /**

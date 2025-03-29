@@ -103,3 +103,19 @@ export async function remove(path: string): Promise<void> {
 export async function rename(oldPath: string, newPath: string): Promise<void> {
   await fs.rename(oldPath, newPath);
 }
+
+/**
+ * Check if directory is empty
+ */
+export async function isEmptyDir(dir: string): Promise<boolean> {
+  try {
+    const entries = await fs.readdir(dir);
+    return entries.length === 0;
+  }
+  catch (error) {
+    if ((error as { code?: string }).code === 'ENOENT') {
+      return true;
+    }
+    throw error;
+  }
+}
