@@ -1,6 +1,6 @@
-import { createClonit } from 'clonit';
+import { create } from 'clonit';
 
-const ctx = await createClonit(import.meta.resolve('./templates/pnpm-package-ts/'), './here');
+const ctx = await create(import.meta.resolve('./templates/pnpm-package-ts/'), './here');
 
 await ctx.rename('_gitignore', '.gitignore');
 await ctx.rename('_env', '.env');

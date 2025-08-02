@@ -9,7 +9,7 @@ import type { ClonitOptions } from './types.js';
 /**
  * 템플릿 폴더를 임시 디렉토리로 복사하고 ClonitContext를 생성
  */
-export async function createClonit(
+export async function create(
   source: string,
   target: string,
   options: ClonitOptions = {},

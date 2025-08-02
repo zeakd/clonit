@@ -4,10 +4,10 @@ Maintainable scaffolding toolkit
 
 
 ```js
-import { createClonit } from 'clonit'
+import { create } from 'clonit'
 
 // -
-const ctx = await createClonit('./templates/hello-app/', {
+const ctx = await create('./templates/hello-app/', {
 	overwrite: true, // overwrite target directory if not empty
 	dryRun: true    // simulate operations without actual changes
 }); 
@@ -29,7 +29,7 @@ await ctx.out('./my-app');
 
 ## Core Concepts
 
-- `createClonit`: 템플릿 폴더를 임시 디렉토리로 복사하고 ClonitContext를 생성
+- `create`: 템플릿 폴더를 임시 디렉토리로 복사하고 ClonitContext를 생성
 - `ClonitContext`: 템플릿 파일을 수정하고 최종 타겟 폴더로 복사하는 컨텍스트
 - `rename`: 파일이나 디렉토리 이름 변경
 - `update`: 텍스트 파일 내용 수정

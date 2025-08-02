@@ -5,12 +5,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { copyDir }                              from '../utils/fs.js';
 import { createTempDir }                        from '../utils/temp.js';
 
-import { createClonit }                         from './create-clonit.js';
+import { create }                               from './create-clonit.js';
 
 vi.mock('../utils/fs.js');
 vi.mock('../utils/temp.js');
 
-describe('createClonit', () => {
+describe('create', () => {
   const sourceDir = '/source';
   const targetDir = '/target';
   const tempDir = '/temp/clonit-test';
@@ -23,7 +23,7 @@ describe('createClonit', () => {
   });
 
   it('should create ClonitContext with source files', async () => {
-    const context = await createClonit(sourceDir, targetDir, { cwd: testCwd });
+    const context = await create(sourceDir, targetDir, { cwd: testCwd });
 
     expect(createTempDir).toHaveBeenCalled();
     expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore: [] });
@@ -33,7 +33,7 @@ describe('createClonit', () => {
 
   it('should respect ignore patterns', async () => {
     const ignore = ['.git', 'node_modules'];
-    await createClonit(sourceDir, targetDir, { cwd: testCwd, ignore });
+    await create(sourceDir, targetDir, { cwd: testCwd, ignore });
 
     expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore });
   });
@@ -42,7 +42,7 @@ describe('createClonit', () => {
     const fileUrl = 'file:///source';
     const expectedPath = fileURLToPath(fileUrl);
 
-    await createClonit(fileUrl, targetDir, { cwd: testCwd });
+    await create(fileUrl, targetDir, { cwd: testCwd });
 
     expect(copyDir).toHaveBeenCalledWith(expectedPath, tempDir, { ignore: [] });
   });
