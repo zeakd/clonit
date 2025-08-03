@@ -53,6 +53,9 @@ export async function copyDir(src: string, dest: string, options: { ignore?: str
     const srcPath = `${src}/${entry}`;
     const destPath = `${dest}/${entry}`;
 
+    // Check if entry matches any ignore pattern
+    // Currently supports simple string matching
+    // TODO: Add proper glob pattern support
     if (options.ignore?.some(pattern => entry === pattern)) {
       continue;
     }

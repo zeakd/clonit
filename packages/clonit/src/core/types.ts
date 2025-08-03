@@ -4,6 +4,11 @@
 export type SourceFunction = (tempDir: string) => Promise<void>;
 
 /**
+ * Transform function result type
+ */
+export type TransformResult<T> = T | undefined | Promise<T | undefined>;
+
+/**
  * Options for fromFS function
  */
 export interface FromFSOptions {
@@ -88,7 +93,7 @@ export interface ClonitContext {
    */
   update(
     relPath: string,
-    transform: (oldContent: string) => string | Promise<string> | undefined | Promise<undefined>
+    transform: (oldContent: string) => TransformResult<string>
   ): Promise<void>;
 
   /**
@@ -98,7 +103,7 @@ export interface ClonitContext {
    */
   updateJson(
     relPath: string,
-    transform: (jsonObj: Record<string, unknown>) => Record<string, unknown> | Promise<Record<string, unknown>> | undefined | Promise<undefined>
+    transform: (jsonObj: Record<string, unknown>) => TransformResult<Record<string, unknown>>
   ): Promise<void>;
 
   /**

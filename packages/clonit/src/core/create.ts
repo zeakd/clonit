@@ -5,7 +5,7 @@ import { fromFS }                             from './from-fs.js';
 import type { ClonitOptions, SourceFunction } from './types.js';
 
 /**
- * 템플릿 폴더를 임시 디렉토리로 복사하고 ClonitContext를 생성
+ * Create a ClonitContext by copying template to temporary directory
  */
 export async function create(
   source: SourceFunction | string,

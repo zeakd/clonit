@@ -1,8 +1,8 @@
-import * as path                                                           from 'node:path';
+import * as path                                                                from 'node:path';
 
-import { readFile, writeFile, copyDir, remove, rename, isEmptyDir, mkdir } from '../utils/fs.js';
+import { readFile, writeFile, copyDir, remove, rename, isEmptyDir, mkdir }      from '../utils/fs.js';
 
-import type { ClonitContext as IClonitContext, ClonitOptions }             from './types.js';
+import type { ClonitContext as IClonitContext, ClonitOptions, TransformResult } from './types.js';
 
 /**
  * Clonit context class
@@ -111,21 +111,37 @@ export class ClonitContext implements IClonitContext {
   }
 
   /**
+   * Apply a transform function to a file
+   */
+  private async applyTransform<T>(
+    relPath: string,
+    readTransform: (content: string) => T,
+    writeTransform: (data: T) => string,
+    transform: (data: T) => TransformResult<T>,
+  ): Promise<void> {
+    const absPath = this.resolvePath(relPath);
+    const content = await readFile(absPath);
+    const data = readTransform(content);
+    const newData = await transform(data);
+
+    if (newData !== undefined && !this.options.dryRun) {
+      await writeFile(absPath, writeTransform(newData));
+    }
+  }
+
+  /**
    * Update content of a text file
    */
   async update(
     relPath: string,
-    transform: (oldContent: string) => string | Promise<string> | undefined | Promise<undefined>,
+    transform: (oldContent: string) => TransformResult<string>,
   ): Promise<void> {
-    const absPath = this.resolvePath(relPath);
-    const content = await readFile(absPath);
-    const newContent = await transform(content);
-    if (newContent !== undefined) {
-      if (this.options.dryRun) {
-        return;
-      }
-      await writeFile(absPath, newContent);
-    }
+    return this.applyTransform(
+      relPath,
+      content => content,
+      data => data,
+      transform,
+    );
   }
 
   /**
@@ -133,18 +149,14 @@ export class ClonitContext implements IClonitContext {
    */
   async updateJson(
     relPath: string,
-    transform: (jsonObj: Record<string, unknown>) => Record<string, unknown> | Promise<Record<string, unknown>> | undefined | Promise<undefined>,
+    transform: (jsonObj: Record<string, unknown>) => TransformResult<Record<string, unknown>>,
   ): Promise<void> {
-    const absPath = this.resolvePath(relPath);
-    const content = await readFile(absPath);
-    const jsonObj = JSON.parse(content);
-    const newJsonObj = await transform(jsonObj);
-    if (newJsonObj !== undefined) {
-      if (this.options.dryRun) {
-        return;
-      }
-      await writeFile(absPath, JSON.stringify(newJsonObj, null, 2));
-    }
+    return this.applyTransform(
+      relPath,
+      content => JSON.parse(content),
+      data => JSON.stringify(data, null, 2),
+      transform,
+    );
   }
 
   /**
@@ -155,7 +167,7 @@ export class ClonitContext implements IClonitContext {
       throw new Error('Target directory path is required');
     }
 
-    // 타겟 디렉토리가 비어있는지 확인
+    // Check if target directory is empty
     const isTargetEmpty = await isEmptyDir(targetDir);
     if (!isTargetEmpty && !this.options.overwrite) {
       throw new Error(`Target directory "${targetDir}" is not empty. Use overwrite option to proceed.`);
