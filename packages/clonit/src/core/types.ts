@@ -1,10 +1,14 @@
 /**
  * Function type for source providers
+ * @param tempDir - Temporary directory path where source should be copied
+ * @returns Promise that resolves when source is ready
  */
 export type SourceFunction = (tempDir: string) => Promise<void>;
 
 /**
  * Transform function result type
+ * Supports synchronous and asynchronous transformations
+ * @template T - Type of the value being transformed
  */
 export type TransformResult<T> = T | undefined | Promise<T | undefined>;
 
@@ -101,9 +105,9 @@ export interface ClonitContext {
    * @param relPath Path of JSON file to update
    * @param transform Function to transform JSON object
    */
-  updateJson(
+  updateJson<T extends Record<string, unknown> = Record<string, unknown>>(
     relPath: string,
-    transform: (jsonObj: Record<string, unknown>) => TransformResult<Record<string, unknown>>
+    transform: (jsonObj: T) => TransformResult<T>
   ): Promise<void>;
 
   /**

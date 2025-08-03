@@ -2,10 +2,12 @@
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./dist/tsconfig.esm.tsbuildinfo",
-    "target": "ESNext",                                  
+    "target": "ES2023",                                  
     "module": "NodeNext",
     "rootDir": "./src",
     "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

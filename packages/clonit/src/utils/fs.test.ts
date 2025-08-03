@@ -1,7 +1,8 @@
-import { Stats }                                      from 'node:fs';
-import * as fs                                        from 'node:fs/promises';
+import { Stats }                                from 'node:fs';
+import * as fs                                  from 'node:fs/promises';
 
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Mock }                            from 'vitest';
 
 import {
   exists,

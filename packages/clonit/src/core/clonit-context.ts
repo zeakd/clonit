@@ -147,13 +147,13 @@ export class ClonitContext implements IClonitContext {
   /**
    * Update content of a JSON file
    */
-  async updateJson(
+  async updateJson<T extends Record<string, unknown> = Record<string, unknown>>(
     relPath: string,
-    transform: (jsonObj: Record<string, unknown>) => TransformResult<Record<string, unknown>>,
+    transform: (jsonObj: T) => TransformResult<T>,
   ): Promise<void> {
     return this.applyTransform(
       relPath,
-      content => JSON.parse(content),
+      content => JSON.parse(content) as T,
       data => JSON.stringify(data, null, 2),
       transform,
     );
