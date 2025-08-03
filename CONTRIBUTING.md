@@ -10,7 +10,7 @@ clonit/
 │   ├── clonit/                 # Core library
 │   │   ├── src/
 │   │   │   ├── core/          # Core functionality
-│   │   │   │   ├── create-clonit.ts    # Main create function
+│   │   │   │   ├── create.ts            # Main create function
 │   │   │   │   ├── clonit-context.ts   # Context for file operations
 │   │   │   │   ├── from-fs.ts          # File system source function
 │   │   │   │   ├── from-git.ts         # Git repository source function
@@ -51,7 +51,7 @@ The context object provides methods to transform files before outputting to the 
 - `update(file, fn)` - Transform text file contents
 - `updateJson(file, fn)` - Transform JSON file contents
 - `read(file)` - Read file contents
-- `out()` - Output transformed files to target directory
+- `out(targetDir)` - Output transformed files to target directory
 
 ### Test-Driven Development
 All features should have corresponding tests:
@@ -134,10 +134,12 @@ The `fromGit` function supports sparse checkout with automatic directory restruc
 The `create` function maintains backward compatibility:
 ```typescript
 // Old API still works
-create('./template', './target')
+const ctx = await create('./template')
+await ctx.out('./target')
 
 // New API with source functions
-create(fromFS('./template'), './target')
+const ctx = await create(fromFS('./template'))
+await ctx.out('./target')
 ```
 
 ### File Transformations

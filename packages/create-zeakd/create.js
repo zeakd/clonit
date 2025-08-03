@@ -160,7 +160,7 @@ async function main() {
 
   try {
     // Create project using selected template
-    const ctx = await create(template.source(), targetDir, { overwrite: false });
+    const ctx = await create(template.source(), { overwrite: false });
 
     // Apply template-specific transformations
     const handler = templateHandlers[templateId];
@@ -168,7 +168,7 @@ async function main() {
       await handler(ctx, projectName);
     }
 
-    await ctx.out();
+    await ctx.out(targetDir);
 
     s.stop('Project created successfully!');
 

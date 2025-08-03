@@ -31,7 +31,7 @@ describe('ClonitContext', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(isEmptyDir).mockResolvedValue(true);
-    context = new ClonitContext(tempDir, targetDir, options);
+    context = new ClonitContext(tempDir, options);
   });
 
   afterEach(async () => {
@@ -40,16 +40,11 @@ describe('ClonitContext', () => {
 
   describe('constructor', () => {
     it('should throw error if tempDir is empty', () => {
-      expect(() => new ClonitContext('', targetDir)).toThrow('Temporary directory path is required');
+      expect(() => new ClonitContext('', options)).toThrow('Temporary directory path is required');
     });
 
-    it('should throw error if targetDir is empty', () => {
-      expect(() => new ClonitContext(tempDir, '')).toThrow('Target directory path is required');
-    });
-
-    it('should set tempDir and targetDir', () => {
+    it('should set tempDir', () => {
       expect(context.tempDir).toBe(tempDir);
-      expect(context.targetDir).toBe(targetDir);
     });
   });
 
@@ -204,7 +199,7 @@ describe('ClonitContext', () => {
 
   describe('out', () => {
     it('should copy files to target directory', async () => {
-      await context.out();
+      await context.out(targetDir);
 
       expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
       expect(remove).toHaveBeenCalledWith(tempDir);
@@ -213,24 +208,24 @@ describe('ClonitContext', () => {
     it('should throw error when target is not empty and overwrite is false', async () => {
       vi.mocked(isEmptyDir).mockResolvedValue(false);
 
-      await expect(context.out())
+      await expect(context.out(targetDir))
         .rejects
         .toThrow('Target directory "/target/clonit-test" is not empty. Use overwrite option to proceed.');
     });
 
     it('should proceed when target is not empty but overwrite is true', async () => {
       vi.mocked(isEmptyDir).mockResolvedValue(false);
-      const context = new ClonitContext(tempDir, targetDir, { ...options, overwrite: true });
+      const context = new ClonitContext(tempDir, { ...options, overwrite: true });
 
-      await context.out();
+      await context.out(targetDir);
 
       expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
       expect(remove).toHaveBeenCalledWith(tempDir);
     });
 
     it('should not remove temp directory when keepTemp is true', async () => {
-      const context = new ClonitContext(tempDir, targetDir, { ...options, keepTemp: true });
-      await context.out();
+      const context = new ClonitContext(tempDir, { ...options, keepTemp: true });
+      await context.out(targetDir);
 
       expect(copyDir).toHaveBeenCalledWith(tempDir, targetDir, { ignore: options.ignore });
       expect(remove).not.toHaveBeenCalled();
@@ -331,34 +326,34 @@ describe('ClonitContext', () => {
 
   describe('cwd', () => {
     it('should use tempDir as cwd', () => {
-      const context = new ClonitContext(tempDir, targetDir, options);
+      const context = new ClonitContext(tempDir, options);
       expect(context.cwd).toBe(tempDir);
     });
 
     it('should not be affected by options.cwd', () => {
       const customCwd = '/custom/cwd';
-      const context = new ClonitContext(tempDir, targetDir, { ...options, cwd: customCwd });
+      const context = new ClonitContext(tempDir, { ...options, cwd: customCwd });
       expect(context.cwd).toBe(tempDir);
     });
   });
 
   describe('resolve', () => {
     it('should resolve relative path to absolute path based on tempDir', () => {
-      const context = new ClonitContext(tempDir, targetDir, options);
+      const context = new ClonitContext(tempDir, options);
       const relPath = 'src/index.ts';
       const expected = path.resolve(tempDir, relPath);
       expect(context.resolve(relPath)).toBe(expected);
     });
 
     it('should handle parent directory traversal', () => {
-      const context = new ClonitContext(tempDir, targetDir, options);
+      const context = new ClonitContext(tempDir, options);
       const relPath = '../lib/utils.ts';
       const expected = path.resolve(tempDir, relPath);
       expect(context.resolve(relPath)).toBe(expected);
     });
 
     it('should handle absolute paths', () => {
-      const context = new ClonitContext(tempDir, targetDir, options);
+      const context = new ClonitContext(tempDir, options);
       const absPath = '/absolute/path/to/file.ts';
       expect(context.resolve(absPath)).toBe(absPath);
     });
@@ -388,7 +383,7 @@ describe('ClonitContext', () => {
 
   describe('dryRun', () => {
     it('should not perform file system operations when dryRun is true', async () => {
-      const context = new ClonitContext(tempDir, targetDir, { ...options, dryRun: true });
+      const context = new ClonitContext(tempDir, { ...options, dryRun: true });
 
       // create
       await context.create('test.txt', 'content');
@@ -412,13 +407,13 @@ describe('ClonitContext', () => {
       expect(writeFile).not.toHaveBeenCalled();
 
       // out
-      await context.out();
+      await context.out(targetDir);
       expect(copyDir).not.toHaveBeenCalled();
       expect(remove).not.toHaveBeenCalled();
     });
 
     it('should still read files in dryRun mode', async () => {
-      const context = new ClonitContext(tempDir, targetDir, { ...options, dryRun: true });
+      const context = new ClonitContext(tempDir, { ...options, dryRun: true });
       const content = 'test content';
       vi.mocked(readFile).mockResolvedValue(content);
 
@@ -429,7 +424,7 @@ describe('ClonitContext', () => {
     });
 
     it('should still validate paths in dryRun mode', async () => {
-      const context = new ClonitContext(tempDir, targetDir, { ...options, dryRun: true });
+      const context = new ClonitContext(tempDir, { ...options, dryRun: true });
 
       await expect(context.create('../outside.txt', 'content')).rejects.toThrow();
       await expect(context.delete('../outside.txt')).rejects.toThrow();

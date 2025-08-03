@@ -13,9 +13,12 @@ We refactored from a string-based source to a function-based approach:
 // Before: Source was just a string path
 create('./template', './target')
 
-// After: Source is a function
-create(fromFS('./template'), './target')
-create(fromGit('https://github.com/org/template'), './target')
+// After: Source is a function, targetDir moved to out()
+const ctx = await create(fromFS('./template'))
+await ctx.out('./target')
+
+const ctx2 = await create(fromGit('https://github.com/org/template'))
+await ctx2.out('./target')
 ```
 
 ### Key Components
@@ -33,6 +36,7 @@ create(fromGit('https://github.com/org/template'), './target')
 3. **Backward Compatibility**
    - `create()` still accepts string sources
    - Internally converts to `fromFS()` for compatibility
+   - Target directory now passed to `out()` instead of `create()`
 
 ## Working with the Codebase
 

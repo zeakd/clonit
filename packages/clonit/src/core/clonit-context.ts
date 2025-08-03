@@ -10,21 +10,15 @@ import type { ClonitContext as IClonitContext, ClonitOptions }             from 
 export class ClonitContext implements IClonitContext {
   /** Temporary directory path */
   readonly tempDir:         string;
-  /** Target directory path */
-  readonly targetDir:       string;
   /** Current working directory (same as tempDir) */
   readonly cwd:             string;
   private readonly options: Required<ClonitOptions>;
 
-  constructor(tempDir: string, targetDir: string, options: ClonitOptions = {}) {
+  constructor(tempDir: string, options: ClonitOptions = {}) {
     if (!tempDir) {
       throw new Error('Temporary directory path is required');
     }
-    if (!targetDir) {
-      throw new Error('Target directory path is required');
-    }
     this.tempDir = tempDir;
-    this.targetDir = targetDir;
     this.cwd = tempDir;
     this.options = {
       ignore:    options.ignore || [],
@@ -156,18 +150,22 @@ export class ClonitContext implements IClonitContext {
   /**
    * Copy temporary folder contents to final target folder
    */
-  async out(): Promise<void> {
+  async out(targetDir: string): Promise<void> {
+    if (!targetDir) {
+      throw new Error('Target directory path is required');
+    }
+    
     // 타겟 디렉토리가 비어있는지 확인
-    const isTargetEmpty = await isEmptyDir(this.targetDir);
+    const isTargetEmpty = await isEmptyDir(targetDir);
     if (!isTargetEmpty && !this.options.overwrite) {
-      throw new Error(`Target directory "${this.targetDir}" is not empty. Use overwrite option to proceed.`);
+      throw new Error(`Target directory "${targetDir}" is not empty. Use overwrite option to proceed.`);
     }
 
     if (this.options.dryRun) {
       return;
     }
 
-    await copyDir(this.tempDir, this.targetDir, { ignore: this.options.ignore });
+    await copyDir(this.tempDir, targetDir, { ignore: this.options.ignore });
 
     if (!this.options.keepTemp) {
       await remove(this.tempDir);

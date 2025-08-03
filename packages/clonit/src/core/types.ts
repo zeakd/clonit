@@ -103,8 +103,9 @@ export interface ClonitContext {
 
   /**
    * Copy temporary folder contents to final target folder
+   * @param targetDir Target directory path
    */
-  out(): Promise<void>;
+  out(targetDir: string): Promise<void>;
 
   /**
    * Resolve relative path to absolute path based on cwd (tempDir)

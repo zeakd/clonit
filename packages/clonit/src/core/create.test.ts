@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { copyDir }                              from '../utils/fs.js';
 import { createTempDir }                        from '../utils/temp.js';
 
-import { create }                               from './create-clonit.js';
+import { create }                               from './create.js';
 import { fromFS }                               from './from-fs.js';
 import { fromGit }                              from './from-git.js';
 
@@ -39,52 +39,52 @@ describe('create', () => {
   describe('with function source', () => {
     it('should accept a source function', async () => {
       const mockSourceFunction = vi.fn().mockResolvedValue(undefined);
-      const context = await create(mockSourceFunction, targetDir, { cwd: testCwd });
+      const context = await create(mockSourceFunction, { cwd: testCwd });
 
       expect(createTempDir).toHaveBeenCalled();
       expect(mockSourceFunction).toHaveBeenCalledWith(tempDir);
       expect(context).toBeDefined();
-      expect(context.targetDir).toBe(targetDir);
+      expect(context.tempDir).toBe(tempDir);
     });
 
     it('should work with fromFS', async () => {
       const mockSourceFunction = vi.fn().mockResolvedValue(undefined);
       vi.mocked(fromFS).mockReturnValue(mockSourceFunction);
 
-      const context = await create(fromFS(sourceDir), targetDir, { cwd: testCwd });
+      const context = await create(fromFS(sourceDir), { cwd: testCwd });
 
       expect(createTempDir).toHaveBeenCalled();
       expect(mockSourceFunction).toHaveBeenCalledWith(tempDir);
       expect(context).toBeDefined();
-      expect(context.targetDir).toBe(targetDir);
+      expect(context.tempDir).toBe(tempDir);
     });
 
     it('should work with fromGit', async () => {
       const mockSourceFunction = vi.fn().mockResolvedValue(undefined);
       vi.mocked(fromGit).mockReturnValue(mockSourceFunction);
 
-      const context = await create(fromGit('https://github.com/user/repo'), targetDir, { cwd: testCwd });
+      const context = await create(fromGit('https://github.com/user/repo'), { cwd: testCwd });
 
       expect(createTempDir).toHaveBeenCalled();
       expect(mockSourceFunction).toHaveBeenCalledWith(tempDir);
       expect(context).toBeDefined();
-      expect(context.targetDir).toBe(targetDir);
+      expect(context.tempDir).toBe(tempDir);
     });
   });
 
   describe('backward compatibility with string source', () => {
     it('should create ClonitContext with source files', async () => {
-      const context = await create(sourceDir, targetDir, { cwd: testCwd });
+      const context = await create(sourceDir, { cwd: testCwd });
 
       expect(createTempDir).toHaveBeenCalled();
       expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore: [] });
       expect(context).toBeDefined();
-      expect(context.targetDir).toBe(targetDir);
+      expect(context.tempDir).toBe(tempDir);
     });
 
     it('should respect ignore patterns', async () => {
       const ignore = ['.git', 'node_modules'];
-      await create(sourceDir, targetDir, { cwd: testCwd, ignore });
+      await create(sourceDir, { cwd: testCwd, ignore });
 
       expect(copyDir).toHaveBeenCalledWith(sourceDir, tempDir, { ignore });
     });
@@ -93,7 +93,7 @@ describe('create', () => {
       const fileUrl = 'file:///source';
       const expectedPath = fileURLToPath(fileUrl);
 
-      await create(fileUrl, targetDir, { cwd: testCwd });
+      await create(fileUrl, { cwd: testCwd });
 
       expect(copyDir).toHaveBeenCalledWith(expectedPath, tempDir, { ignore: [] });
     });

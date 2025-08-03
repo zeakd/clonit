@@ -16,8 +16,12 @@ Clonit introduces a **source function** architecture that separates the source o
 create('./templates/my-app', './new-app')
 
 // Clonit approach - source is a function
-create(fromFS('./templates/my-app'), './new-app')
-create(fromGit('https://github.com/org/template'), './new-app')
+const ctx = await create(fromFS('./templates/my-app'))
+await ctx.out('./new-app')
+
+// Or from git
+const ctx2 = await create(fromGit('https://github.com/org/template'))
+await ctx2.out('./new-app')
 ```
 
 This separation enables:

@@ -48,7 +48,7 @@ await ctx.updateJson('package.json', (pkg) => {
 })
 
 // Output to target directory
-await ctx.out();
+await ctx.out('./my-app');
 ```
 
 ## Source Functions
@@ -91,7 +91,7 @@ const ctx = await create(
 - `update`: 텍스트 파일 내용 수정
 - `updateJson`: JSON 파일 내용 수정
 - `read`: 파일 내용 읽기
-- `out`: 임시 폴더의 내용을 최종 타겟 폴더로 복사
+- `out(targetDir)`: 임시 폴더의 내용을 최종 타겟 폴더로 복사
 
 ## Options
 
