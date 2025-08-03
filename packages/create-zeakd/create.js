@@ -11,10 +11,26 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Template definitions
 const templates = {
-  'pnpm-ts': {
-    name:   'PNPM + TypeScript',
-    source: () => fromFS(path.join(__dirname, 'templates/pnpm-package-ts')),
-    hint:   'Basic TypeScript project',
+  'ts-package': {
+    name:   'TypeScript Package',
+    source: () => fromGit('https://github.com/zeakd/templates', {
+      sparse: ['ts-package'],
+    }),
+    hint:   'Pure ESM TypeScript package with Vitest',
+  },
+  'python-app': {
+    name:   'Python Application',
+    source: () => fromGit('https://github.com/zeakd/templates', {
+      sparse: ['python-app'],
+    }),
+    hint:   'Python 3.12+ with uv, Ruff, and pytest',
+  },
+  'pnpm-monorepo': {
+    name:   'PNPM Monorepo',
+    source: () => fromGit('https://github.com/zeakd/templates', {
+      sparse: ['pnpm-monorepo'],
+    }),
+    hint:   'PNPM workspace monorepo structure',
   },
   'react-ts': {
     name:   'React + TypeScript (Vite)',
@@ -27,28 +43,21 @@ const templates = {
 
 // Template-specific handlers
 const templateHandlers = {
-  'pnpm-ts': async (ctx, projectName) => {
-    try {
-      await ctx.rename('_gitignore', '.gitignore');
-    }
-    catch {
-      // File doesn't exist, ignore
-    }
-
-    try {
-      await ctx.rename('_env', '.env');
-    }
-    catch {
-      // File doesn't exist, ignore
-    }
-
-    try {
-      await ctx.rename('_env.local', '.env.local');
-    }
-    catch {
-      // File doesn't exist, ignore
-    }
-
+  'ts-package': async (ctx, projectName) => {
+    // Update package.json
+    await ctx.updateJson('package.json', (json) => {
+      json.name = projectName;
+      return json;
+    });
+  },
+  'python-app': async (ctx, projectName) => {
+    // Update pyproject.toml
+    await ctx.update('pyproject.toml', (content) => {
+      return content.replace(/name = "python-app"/, `name = "${projectName}"`);
+    });
+  },
+  'pnpm-monorepo': async (ctx, projectName) => {
+    // Update root package.json
     await ctx.updateJson('package.json', (json) => {
       json.name = projectName;
       return json;
@@ -80,12 +89,12 @@ const cli = meow(`
     $ create-zeakd [project-name]
 
   Options
-    --template, -t  Choose template (pnpm-ts, react-ts)
+    --template, -t  Choose template (ts-package, python-app, pnpm-monorepo, react-ts)
 
   Examples
     $ create-zeakd my-app
-    $ create-zeakd my-app --template react-ts
-    $ create-zeakd my-app -t pnpm-ts
+    $ create-zeakd my-app --template ts-package
+    $ create-zeakd my-app -t python-app
 `, {
   importMeta: import.meta,
   flags:      {
@@ -172,13 +181,36 @@ async function main() {
 
     s.stop('Project created successfully!');
 
+    // Determine next steps based on template
+    let nextSteps = '';
+    switch (templateId) {
+      case 'ts-package':
+        nextSteps = `  cd ${projectName}
+  pnpm install
+  pnpm test`;
+        break;
+      case 'python-app':
+        nextSteps = `  cd ${projectName}
+  uv sync
+  uv run python -m app`;
+        break;
+      case 'pnpm-monorepo':
+        nextSteps = `  cd ${projectName}
+  pnpm install
+  pnpm build`;
+        break;
+      case 'react-ts':
+        nextSteps = `  cd ${projectName}
+  npm install
+  npm run dev`;
+        break;
+    }
+
     outro(`✨ Done!
 Project created at ${targetDir}
 
 Next steps:
-  cd ${projectName}
-  ${templateId === 'pnpm-ts' ? 'pnpm install' : 'npm install'}
-  ${templateId === 'pnpm-ts' ? 'pnpm dev' : 'npm run dev'}
+${nextSteps}
 `);
   }
   catch (error) {
