@@ -1,27 +1,27 @@
-import { fileURLToPath }      from 'node:url';
+import { createTempDir }                               from '../utils/temp.js';
 
-import { copyDir }            from '../utils/fs.js';
-import { createTempDir }      from '../utils/temp.js';
-
-import { ClonitContext }      from './clonit-context.js';
-import type { ClonitOptions } from './types.js';
+import { ClonitContext }                               from './clonit-context.js';
+import { fromFS }                                      from './from-fs.js';
+import type { ClonitOptions, SourceFunction }         from './types.js';
 
 /**
  * 템플릿 폴더를 임시 디렉토리로 복사하고 ClonitContext를 생성
  */
 export async function create(
-  source: string,
+  source: SourceFunction | string,
   target: string,
   options: ClonitOptions = {},
 ): Promise<ClonitContext> {
   const tempDir = await createTempDir();
 
-  // file:// URL을 처리
-  const sourcePath = source.startsWith('file://')
-    ? fileURLToPath(source)
-    : source;
-
-  await copyDir(sourcePath, tempDir, { ignore: options.ignore || [] });
+  if (typeof source === 'string') {
+    // Backward compatibility: treat string as file system source
+    const sourceFunction = fromFS(source, { ignore: options.ignore });
+    await sourceFunction(tempDir);
+  } else {
+    // New API: execute the source function
+    await source(tempDir);
+  }
 
   return new ClonitContext(tempDir, target, options);
 }
