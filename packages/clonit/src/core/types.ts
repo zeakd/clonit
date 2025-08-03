@@ -1,4 +1,33 @@
 /**
+ * Function type for source providers
+ */
+export type SourceFunction = (tempDir: string) => Promise<void>;
+
+/**
+ * Options for fromFS function
+ */
+export interface FromFSOptions {
+  /** File/folder patterns to ignore when copying (glob) */
+  ignore?: string[];
+}
+
+/**
+ * Options for fromGit function
+ */
+export interface FromGitOptions {
+  /** Branch to clone */
+  branch?: string;
+  /** Tag to clone */
+  tag?: string;
+  /** Specific commit to checkout after clone */
+  commit?: string;
+  /** Clone depth for shallow clones */
+  depth?: number;
+  /** Sparse checkout patterns */
+  sparse?: string[];
+}
+
+/**
  * Basic options interface for clonit
  */
 export interface ClonitOptions {
