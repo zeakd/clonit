@@ -2,7 +2,7 @@
   "name": "@zeakd/create",
   "version": "1.0.0",
   "type": "module",
-  "description": "",
+  "description": "Create projects from zeakd templates",
   "bin": {
     "create-zeakd": "./create.js"
   },
@@ -14,7 +14,29 @@
     "@clack/prompts": "^0.11.0",
     "meow": "^13.2.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "create",
+    "init",
+    "scaffold",
+    "template",
+    "zeakd"
+  ],
+  "author": "zeakd",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeakd/clonit.git",
+    "directory": "packages/create-zeakd"
+  },
+  "bugs": {
+    "url": "https://github.com/zeakd/clonit/issues"
+  },
+  "homepage": "https://github.com/zeakd/clonit#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "create.js",
+    "templates"
+  ]
 }

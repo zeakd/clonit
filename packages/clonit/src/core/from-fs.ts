@@ -83,7 +83,7 @@ export function fromFS(source: string, options: FromFSOptions = {}): SourceFunct
 
       if (gitignoreFiles.length > 0) {
         // Create ignore instance and add patterns from all .gitignore files
-        const ig = ignore.default();
+        const ig = ignore();
 
         for (const ignoreFile of gitignoreFiles) {
           const content = await fs.readFile(ignoreFile, 'utf-8');

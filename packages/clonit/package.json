@@ -19,17 +19,37 @@
   "files": [
     "dist"
   ],
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "scaffold",
+    "scaffolding",
+    "generator",
+    "template",
+    "boilerplate",
+    "create",
+    "init"
+  ],
+  "author": "zeakd",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeakd/clonit.git",
+    "directory": "packages/clonit"
+  },
+  "bugs": {
+    "url": "https://github.com/zeakd/clonit/issues"
+  },
+  "homepage": "https://github.com/zeakd/clonit#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
-    "@types/node": "^22.7.4",
-    "typescript": "^5.6.2",
-    "vitest": "^2.1.2"
+    "@types/node": "^24.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "execa": "^9.4.0",
-    "ignore": "^6.0.2",
-    "tinyglobby": "^0.2.9"
+    "execa": "^9.6.0",
+    "ignore": "^7.0.5",
+    "tinyglobby": "^0.2.14"
   }
 }
