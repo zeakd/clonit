@@ -154,7 +154,7 @@ export class ClonitContext implements IClonitContext {
     if (!targetDir) {
       throw new Error('Target directory path is required');
     }
-    
+
     // 타겟 디렉토리가 비어있는지 확인
     const isTargetEmpty = await isEmptyDir(targetDir);
     if (!isTargetEmpty && !this.options.overwrite) {

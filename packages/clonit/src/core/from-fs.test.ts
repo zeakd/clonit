@@ -1,10 +1,10 @@
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath }                        from 'node:url';
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { copyDir } from '../utils/fs.js';
+import { copyDir }                              from '../utils/fs.js';
 
-import { fromFS } from './from-fs.js';
+import { fromFS }                               from './from-fs.js';
 
 vi.mock('../utils/fs.js');
 
@@ -41,7 +41,7 @@ describe('fromFS', () => {
     const fileUrl = 'file:///source';
     const expectedPath = fileURLToPath(fileUrl);
     const sourceFunction = fromFS(fileUrl);
-    
+
     await sourceFunction(tempDir);
 
     expect(copyDir).toHaveBeenCalledWith(expectedPath, tempDir, { ignore: [] });

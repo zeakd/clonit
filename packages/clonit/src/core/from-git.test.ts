@@ -1,7 +1,7 @@
+import { execa }                                from 'execa';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { execa } from 'execa';
 
-import { fromGit } from './from-git.js';
+import { fromGit }                              from './from-git.js';
 
 vi.mock('execa');
 
@@ -12,10 +12,10 @@ describe('fromGit', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(execa).mockImplementation(() => ({
-      stdout: '',
-      stderr: '',
+      stdout:   '',
+      stderr:   '',
       exitCode: 0,
-    } as any));
+    } as unknown as ReturnType<typeof execa>));
   });
 
   it('should return a function', () => {
@@ -34,7 +34,7 @@ describe('fromGit', () => {
       '--depth',
       '1',
       repo,
-      tempDir
+      tempDir,
     ]);
   });
 
@@ -49,7 +49,7 @@ describe('fromGit', () => {
       '--depth',
       '1',
       repo,
-      tempDir
+      tempDir,
     ]);
   });
 
@@ -64,7 +64,7 @@ describe('fromGit', () => {
       '--depth',
       '3',
       repo,
-      tempDir
+      tempDir,
     ]);
   });
 
@@ -79,7 +79,7 @@ describe('fromGit', () => {
       '--depth',
       '1',
       repo,
-      tempDir
+      tempDir,
     ]);
   });
 
@@ -94,7 +94,7 @@ describe('fromGit', () => {
       '--depth',
       '5',
       repo,
-      tempDir
+      tempDir,
     ]);
   });
 
@@ -110,7 +110,7 @@ describe('fromGit', () => {
       '--depth',
       '1',
       localRepo,
-      tempDir
+      tempDir,
     ]);
   });
 
@@ -135,7 +135,7 @@ describe('fromGit', () => {
       '--filter=blob:none',
       '--sparse',
       repo,
-      tempDir
+      tempDir,
     ]);
 
     // Should initialize sparse-checkout
@@ -144,7 +144,7 @@ describe('fromGit', () => {
       tempDir,
       'sparse-checkout',
       'init',
-      '--cone'
+      '--cone',
     ]);
 
     // Should set sparse-checkout patterns
@@ -153,7 +153,7 @@ describe('fromGit', () => {
       tempDir,
       'sparse-checkout',
       'set',
-      'packages/create-vite/template-react-ts'
+      'packages/create-vite/template-react-ts',
     ]);
   });
 });

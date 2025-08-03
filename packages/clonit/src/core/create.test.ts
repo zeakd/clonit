@@ -16,7 +16,7 @@ vi.mock('./from-git.js');
 
 describe('create', () => {
   const sourceDir = '/source';
-  const targetDir = '/target';
+  // const targetDir = '/target'; // No longer used after API change
   const tempDir = '/temp/clonit-test';
   const testCwd = '/test/cwd';
 
@@ -24,7 +24,7 @@ describe('create', () => {
     vi.resetAllMocks();
     vi.mocked(createTempDir).mockResolvedValue(tempDir);
     vi.mocked(copyDir).mockResolvedValue(undefined);
-    
+
     // Mock fromFS to return a function that calls copyDir
     vi.mocked(fromFS).mockImplementation((source, options) => {
       return async (tempDir) => {

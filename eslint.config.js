@@ -7,23 +7,28 @@ import tseslint     from 'typescript-eslint';
 
 export default [
   {
-    files:   ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     ignores: [
-      '**/node_modules',
-      '**/.next',
+      '**/node_modules/**',
+      '**/.next/**',
       '**/dist/**',
       '**/out/**',
       '**/_/**',
     ],
   },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+  },
   tseslint.configs.base,
   {
     languageOptions: {
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
   },
   pluginJs.configs.recommended,
-  stylistic.configs['recommended-flat'],
+  stylistic.configs.recommended,
   ...tseslint.configs.recommended,
   {
     plugins: {

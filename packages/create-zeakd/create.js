@@ -1,23 +1,23 @@
 #!/usr/bin/env node
-import path from 'node:path';
-import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import path                                                      from 'node:path';
+import process                                                   from 'node:process';
+import { fileURLToPath }                                         from 'node:url';
 
 import { intro, outro, select, text, spinner, cancel, isCancel } from '@clack/prompts';
-import { create, fromFS, fromGit } from 'clonit';
-import meow from 'meow';
+import { create, fromFS, fromGit }                               from 'clonit';
+import meow                                                      from 'meow';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Template definitions
 const templates = {
   'pnpm-ts': {
-    name: 'PNPM + TypeScript',
+    name:   'PNPM + TypeScript',
     source: () => fromFS(path.join(__dirname, 'templates/pnpm-package-ts')),
-    hint: 'Basic TypeScript project',
+    hint:   'Basic TypeScript project',
   },
   'react-ts': {
-    name: 'React + TypeScript (Vite)',
+    name:   'React + TypeScript (Vite)',
     source: () => fromGit('https://github.com/vitejs/vite', {
       sparse: ['packages/create-vite/template-react-ts'],
     }),
@@ -88,9 +88,9 @@ const cli = meow(`
     $ create-zeakd my-app -t pnpm-ts
 `, {
   importMeta: import.meta,
-  flags: {
+  flags:      {
     template: {
-      type: 'string',
+      type:      'string',
       shortFlag: 't',
     },
   },
@@ -105,9 +105,9 @@ async function main() {
     intro('create-zeakd - Project scaffolding tool');
 
     projectName = await text({
-      message: 'What is your project name?',
+      message:     'What is your project name?',
       placeholder: 'my-awesome-project',
-      validate: (value) => {
+      validate:    (value) => {
         if (!value) return 'Project name is required';
         if (!/^[a-z0-9-_]+$/.test(value)) {
           return 'Project name can only contain lowercase letters, numbers, hyphens, and underscores';
@@ -133,7 +133,7 @@ async function main() {
       options: Object.entries(templates).map(([id, template]) => ({
         value: id,
         label: template.name,
-        hint: template.hint,
+        hint:  template.hint,
       })),
     });
 

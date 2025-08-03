@@ -1,6 +1,6 @@
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath }                      from 'node:url';
 
-import { copyDir } from '../utils/fs.js';
+import { copyDir }                            from '../utils/fs.js';
 
 import type { SourceFunction, FromFSOptions } from './types.js';
 

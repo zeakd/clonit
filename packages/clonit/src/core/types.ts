@@ -18,11 +18,11 @@ export interface FromGitOptions {
   /** Branch to clone */
   branch?: string;
   /** Tag to clone */
-  tag?: string;
+  tag?:    string;
   /** Specific commit to checkout after clone */
   commit?: string;
   /** Clone depth for shallow clones */
-  depth?: number;
+  depth?:  number;
   /** Sparse checkout patterns */
   sparse?: string[];
 }
