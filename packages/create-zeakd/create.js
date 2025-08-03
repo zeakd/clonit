@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 import path                                                      from 'node:path';
 import process                                                   from 'node:process';
-import { fileURLToPath }                                         from 'node:url';
 
 import { intro, outro, select, text, spinner, cancel, isCancel } from '@clack/prompts';
-import { create, fromFS, fromGit }                               from 'clonit';
+import { create, fromGit }                                       from 'clonit';
 import meow                                                      from 'meow';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Template definitions
 const templates = {
@@ -16,21 +13,21 @@ const templates = {
     source: () => fromGit('https://github.com/zeakd/templates', {
       sparse: ['ts-package'],
     }),
-    hint:   'Pure ESM TypeScript package with Vitest',
+    hint: 'Pure ESM TypeScript package with Vitest',
   },
   'python-app': {
     name:   'Python Application',
     source: () => fromGit('https://github.com/zeakd/templates', {
       sparse: ['python-app'],
     }),
-    hint:   'Python 3.12+ with uv, Ruff, and pytest',
+    hint: 'Python 3.12+ with uv, Ruff, and pytest',
   },
   'pnpm-monorepo': {
     name:   'PNPM Monorepo',
     source: () => fromGit('https://github.com/zeakd/templates', {
       sparse: ['pnpm-monorepo'],
     }),
-    hint:   'PNPM workspace monorepo structure',
+    hint: 'PNPM workspace monorepo structure',
   },
   'react-ts': {
     name:   'React + TypeScript (Vite)',
