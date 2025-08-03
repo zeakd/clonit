@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "bin": "./create.js",
+  "bin": {
+    "create-zeakd": "./create.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "clonit": "workspace:^"
+    "clonit": "workspace:^",
+    "@clack/prompts": "^0.11.0",
+    "meow": "^13.2.0"
   },
   "keywords": [],
   "author": "",
